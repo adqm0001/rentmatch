@@ -1,1 +1,5 @@
 notes/
+PROJECT.md
+target/
+*.class
+.idea/
