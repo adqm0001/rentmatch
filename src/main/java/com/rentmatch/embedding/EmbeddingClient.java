@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class EmbeddingClient {
 
     // Turns a piece of text into its 1024 number embedding vector (Voyage voyage-4).
-    public float[] getEmbedding(String text) throws Exception {
+    public float[] getEmbedding(String text, String inputType) throws Exception {
         String VOYAGE_API_KEY = System.getenv("VOYAGE_API_KEY");
         if (VOYAGE_API_KEY == null) throw new IllegalStateException("API KEY missing.");
 
@@ -19,7 +19,7 @@ public class EmbeddingClient {
         ObjectNode node = mapper.createObjectNode();
         node.put("input", text);
         node.put("model", "voyage-4");
-        node.put("input_type", "document");
+        node.put("input_type", inputType);
         String jsonBody = mapper.writeValueAsString(node);
 
         HttpRequest postRequest = HttpRequest.newBuilder()

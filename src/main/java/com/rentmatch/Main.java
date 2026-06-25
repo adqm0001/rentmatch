@@ -1,25 +1,25 @@
 package com.rentmatch;
 
 import com.rentmatch.model.Listing;
-import com.rentmatch.source.ListingSource;
-import com.rentmatch.source.SeedSource;
 import com.rentmatch.embedding.EmbeddingClient;
+import com.rentmatch.repository.ListingRepository;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        ListingSource source = new SeedSource();
-        List<Listing> listings = source.getListings();
-
         EmbeddingClient embeddingClient = new EmbeddingClient();
+        ListingRepository repository = new ListingRepository();
 
-        Listing first = listings.get(0);
-        String text = first.getTitle() + " " + first.getDescription();
-        float[] vector = embeddingClient.getEmbedding(text);
+        String query = "sunny quiet one bedroom near cafes";
+        float[] queryVector = embeddingClient.getEmbedding(query, "query");
 
-        System.out.println("Embedded: " + first.getTitle());
-        System.out.println("Vector length: " + vector.length);
-        System.out.println("First 5 numbers: " + vector[0] + ", " + vector[1] + ", "
-                + vector[2] + ", " + vector[3] + ", " + vector[4]);
+        List<Listing> matches = repository.findSimilar(queryVector, 5);
+
+        System.out.println("Query: \"" + query + "\"\n");
+        System.out.println("Top matches (closest first):");
+        for (Listing l : matches) {
+            System.out.println("  - " + l.getTitle() + " - $" + l.getPrice()
+                    + " (" + l.getNeighbourhood() + ", " + l.getBedrooms() + "bd)");
+        }
     }
 }
